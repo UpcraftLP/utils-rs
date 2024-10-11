@@ -1,0 +1,21 @@
+[package]
+name = "utils"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chrono = "0.4.38"
+clap = { version = "4.5.20", features = ["cargo", "derive"] }
+uuid = { version = "1.10.0", features = ["v4"] }
+
+[[bin]]
+name = "datetime"
+path = "src/bin/datetime.rs"
+
+[[bin]]
+name = "hello-world"
+path = "src/bin/hello-world.rs"
+
+[[bin]]
+name = "uuid"
+path = "src/bin/uuid.rs"
