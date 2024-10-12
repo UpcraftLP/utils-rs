@@ -2,13 +2,13 @@ use std::fmt::Display;
 use async_trait::async_trait;
 use chrono::DateTime;
 use chrono_tz::Tz;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use crate::timezone;
 
 mod maps_co;
 mod no_op;
 
-#[derive(Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 #[serde(tag = "provider")]
 pub enum MapConfig {
     #[serde(rename = "maps.co")]
