@@ -1,0 +1,65 @@
+use crate::maps::Location;
+use chrono::{DateTime, NaiveDateTime};
+use chrono_tz::Tz;
+use reqwest::header::ACCEPT;
+use reqwest::Url;
+use serde::Deserialize;
+
+pub async fn get_time_at(location: &Location) -> anyhow::Result<GetTimeResponse> {
+
+    let client = reqwest::Client::new();
+
+    let mut url = Url::parse("https://timeapi.io/api/time/current/coordinate")?;
+    url.query_pairs_mut().append_pair("latitude", &location.lat.to_string()).append_pair("longitude", &location.lon.to_string());
+    let result = client.get(url)
+        //TODO UA header
+        .header(ACCEPT, "application/json")
+        .send().await?
+        .json::<GetTimeResponse>().await?;
+    Ok(result)
+}
+
+#[derive(Deserialize)]
+pub struct GetTimeResponse {
+    year: i32,
+    month: i32,
+    day: i32,
+    hour: i32,
+    minute: i32,
+    seconds: i32,
+    #[serde(rename = "milliSeconds")]
+    milli_seconds: i32,
+    #[serde(rename = "dateTime")]
+    raw_date_time: String,
+    #[serde(rename = "date")]
+    raw_date: String,
+    #[serde(rename = "time")]
+    raw_time: String,
+    #[serde(rename = "timeZone")]
+    time_zone: String,
+    #[serde(rename = "dayOfWeek")]
+    day_of_week: DayOfWeek,
+    #[serde(rename = "dstActive")]
+    dst_active: bool,
+}
+
+impl GetTimeResponse {
+    pub fn date_time(&self) -> anyhow::Result<DateTime<Tz>> {
+        let time_zone = self.time_zone.parse::<Tz>()?;
+        let date_time = self.raw_date_time.parse::<NaiveDateTime>()?;
+        let mapped = date_time.and_local_timezone(time_zone).unwrap();
+        Ok(mapped)
+    }
+}
+
+
+#[derive(Deserialize)]
+enum DayOfWeek {
+    Sunday,
+    Monday,
+    Tuesday,
+    Wednesday,
+    Thursday,
+    Friday,
+    Saturday,
+}

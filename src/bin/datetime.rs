@@ -1,12 +1,12 @@
-use clap::crate_authors;
 use chrono::{DateTime, Local, Utc};
 use clap::builder::PossibleValue;
+use clap::crate_authors;
 use clap::{Parser, ValueEnum};
 use std::fmt::{Display, Formatter};
 use std::str::FromStr;
 
 #[derive(Parser)]
-#[command(author = crate_authors!(), version, about, long_about = None, name = "datetime")]
+#[command(author = crate_authors!(), version = utils::VERSION, about, name = "datetime")]
 struct Args {
     #[arg(short, long, default_value = "unix", value_enum)]
     epoch: Epoch,

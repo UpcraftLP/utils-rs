@@ -3,7 +3,7 @@ use clap::{arg, Parser};
 use uuid::Uuid;
 
 #[derive(Parser)]
-#[command(author = crate_authors!(), version, about, long_about = None, name = "uuid")]
+#[command(author = crate_authors!(), version = utils::VERSION, about, long_about = None, name = "uuid")]
 struct Args {
     #[arg(short = 's', long, help = "output a 'slim' UUID without hyphens")]
     slim: bool,
