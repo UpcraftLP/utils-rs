@@ -1,9 +1,9 @@
-use std::fmt::Display;
+use crate::timezone;
 use async_trait::async_trait;
 use chrono::DateTime;
 use chrono_tz::Tz;
 use serde::{Deserialize, Serialize};
-use crate::timezone;
+use std::fmt::Display;
 
 mod maps_co;
 mod no_op;
@@ -21,7 +21,7 @@ impl MapConfig {
     pub fn create_provider(&self) -> Box<dyn MapsProvider> {
         let provider: Box<dyn MapsProvider> = match self {
             MapConfig::MapsCo { api_key } => Box::new(maps_co::MapsCoProvider::new(api_key)),
-            MapConfig::None => Box::new(no_op::NoOpMapsProvider{}),
+            MapConfig::None => Box::new(no_op::NoOpMapsProvider {}),
         };
         provider
     }
@@ -40,10 +40,14 @@ pub trait MapsProvider {
 
 impl Display for MapConfig {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", match self {
-            MapConfig::MapsCo { .. } => "maps.co",
-            MapConfig::None => "none",
-        })
+        write!(
+            f,
+            "{}",
+            match self {
+                MapConfig::MapsCo { .. } => "maps.co",
+                MapConfig::None => "none",
+            }
+        )
     }
 }
 

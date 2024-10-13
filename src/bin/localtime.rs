@@ -17,16 +17,23 @@ impl Args {
     }
 }
 
-
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let args = Args::parse();
 
     let cfg = utils::config::load_config()?;
-    let location = cfg.maps.create_provider().get_location(&args.args_string()).await?;
+    let location = cfg
+        .maps
+        .create_provider()
+        .get_location(&args.args_string())
+        .await?;
 
     if location.is_none() {
-        println!("Unable to find location: '{}' with provider '{}'", args.args_string(), cfg.maps);
+        println!(
+            "Unable to find location: '{}' with provider '{}'",
+            args.args_string(),
+            cfg.maps
+        );
         return Ok(());
     }
 
@@ -35,7 +42,10 @@ async fn main() -> anyhow::Result<()> {
         Some(location) => {
             let time_info = utils::maps::Location::get_time_at(&location).await?;
 
-            println!("Location: {}", location.name.unwrap_or_else(|| args.args_string()));
+            println!(
+                "Location: {}",
+                location.name.unwrap_or_else(|| args.args_string())
+            );
             println!("Latitude: {}", location.lat);
             println!("Longitude: {}", location.lon);
             println!("Timezone: {}", time_info.timezone().name());

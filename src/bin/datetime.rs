@@ -11,7 +11,11 @@ struct Args {
     #[arg(short, long, default_value = "unix", value_enum)]
     epoch: Epoch,
 
-    #[arg(long = "ms", default_value = "false", help = "output milliseconds instead of seconds")]
+    #[arg(
+        long = "ms",
+        default_value = "false",
+        help = "output milliseconds instead of seconds"
+    )]
     milliseconds: bool,
 }
 
@@ -43,7 +47,10 @@ impl FromStr for Epoch {
             "unix" => Ok(Epoch::Unix),
             "twitter" => Ok(Epoch::TwitterSnowflake),
             "discord" => Ok(Epoch::DiscordSnowflake),
-            _ => s.parse::<DateTime<Local>>().map_err(|e| format!("failed to parse DateTime: {e}")).map(|value| Epoch::Custom(value.to_utc())),
+            _ => s
+                .parse::<DateTime<Local>>()
+                .map_err(|e| format!("failed to parse DateTime: {e}"))
+                .map(|value| Epoch::Custom(value.to_utc())),
         }
     }
 }
@@ -64,17 +71,30 @@ impl Display for Epoch {
 impl ValueEnum for Epoch {
     fn value_variants<'a>() -> &'a [Self] {
         // "2021-01-01T00:00:00Z"
-        const EXAMPLE_TIMESTAMP: DateTime<Utc> = DateTime::from_timestamp_nanos(1609459200000000000);
-        
-        &[Epoch::Unix, Epoch::TwitterSnowflake, Epoch::DiscordSnowflake, Epoch::Custom(EXAMPLE_TIMESTAMP)]
+        const EXAMPLE_TIMESTAMP: DateTime<Utc> =
+            DateTime::from_timestamp_nanos(1609459200000000000);
+
+        &[
+            Epoch::Unix,
+            Epoch::TwitterSnowflake,
+            Epoch::DiscordSnowflake,
+            Epoch::Custom(EXAMPLE_TIMESTAMP),
+        ]
     }
 
     fn to_possible_value(&self) -> Option<PossibleValue> {
         Some(match self {
             Epoch::Unix => PossibleValue::new("unix").help("the Unix epoch (Jan 1, 1970)"),
-            Epoch::TwitterSnowflake => PossibleValue::new("twitter").help("the Twitter Snowflake epoch (Jan 1, 2010)"),
-            Epoch::DiscordSnowflake => PossibleValue::new("discord").help("the Discord Snowflake epoch (Jan 1, 2015)"),
-            Epoch::Custom(dt) => PossibleValue::new("custom").help(format!("a custom epoch in RFC3339 format. Example: {timestamp}", timestamp = dt.to_rfc3339())),
+            Epoch::TwitterSnowflake => {
+                PossibleValue::new("twitter").help("the Twitter Snowflake epoch (Jan 1, 2010)")
+            }
+            Epoch::DiscordSnowflake => {
+                PossibleValue::new("discord").help("the Discord Snowflake epoch (Jan 1, 2015)")
+            }
+            Epoch::Custom(dt) => PossibleValue::new("custom").help(format!(
+                "a custom epoch in RFC3339 format. Example: {timestamp}",
+                timestamp = dt.to_rfc3339()
+            )),
         })
     }
 }

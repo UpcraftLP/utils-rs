@@ -1,24 +1,28 @@
-use std::fmt::{Display, Formatter};
-use std::path::Display;
-use std::str::FromStr;
-use anyhow::bail;
 use crate::maps::Location;
+use anyhow::bail;
 use chrono::{DateTime, NaiveDateTime};
 use chrono_tz::Tz;
 use reqwest::header::ACCEPT;
 use reqwest::Url;
 use serde::{Deserialize, Serialize};
+use std::fmt::{Display, Formatter};
+use std::str::FromStr;
 
 pub async fn get_time_at(location: &Location) -> anyhow::Result<GetTimeResponse> {
     let client = reqwest::Client::new();
 
     let mut url = Url::parse("https://timeapi.io/api/time/current/coordinate")?;
-    url.query_pairs_mut().append_pair("latitude", &location.lat.to_string()).append_pair("longitude", &location.lon.to_string());
-    let result = client.get(url)
+    url.query_pairs_mut()
+        .append_pair("latitude", &location.lat.to_string())
+        .append_pair("longitude", &location.lon.to_string());
+    let result = client
+        .get(url)
         //TODO UA header
         .header(ACCEPT, "application/json")
-        .send().await?
-        .json::<GetTimeResponse>().await?;
+        .send()
+        .await?
+        .json::<GetTimeResponse>()
+        .await?;
     Ok(result)
 }
 
@@ -55,7 +59,6 @@ impl GetTimeResponse {
     }
 }
 
-
 #[derive(Serialize, Deserialize, Debug)]
 enum DayOfWeek {
     Sunday,
@@ -74,16 +77,20 @@ impl Default for DayOfWeek {
 }
 
 impl Display for DayOfWeek {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> {
-        write!(f, "{}", match self {
-            DayOfWeek::Sunday => "Sunday",
-            DayOfWeek::Monday => "Monday",
-            DayOfWeek::Tuesday => "Tuesday",
-            DayOfWeek::Wednesday => "Wednesday",
-            DayOfWeek::Thursday => "Thursday",
-            DayOfWeek::Friday => "Friday",
-            DayOfWeek::Saturday => "Saturday",
-        })
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                DayOfWeek::Sunday => "Sunday",
+                DayOfWeek::Monday => "Monday",
+                DayOfWeek::Tuesday => "Tuesday",
+                DayOfWeek::Wednesday => "Wednesday",
+                DayOfWeek::Thursday => "Thursday",
+                DayOfWeek::Friday => "Friday",
+                DayOfWeek::Saturday => "Saturday",
+            }
+        )
     }
 }
 
