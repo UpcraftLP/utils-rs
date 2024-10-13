@@ -7,4 +7,4 @@ pub mod built_info {
 }
 
 pub const VERSION: Option<&str> = built_info::GIT_VERSION;
-pub const APP_NAME: &'static str = "up_utils";
+pub const APP_NAME: &str = "up_utils";

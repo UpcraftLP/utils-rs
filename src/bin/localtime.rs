@@ -1,4 +1,3 @@
-use anyhow::Context;
 use chrono::{Local, Offset};
 use clap::crate_authors;
 use clap::Parser;

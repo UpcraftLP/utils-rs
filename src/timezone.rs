@@ -59,8 +59,9 @@ impl GetTimeResponse {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 enum DayOfWeek {
+    #[default]
     Sunday,
     Monday,
     Tuesday,
@@ -68,12 +69,6 @@ enum DayOfWeek {
     Thursday,
     Friday,
     Saturday,
-}
-
-impl Default for DayOfWeek {
-    fn default() -> Self {
-        DayOfWeek::Sunday
-    }
 }
 
 impl Display for DayOfWeek {

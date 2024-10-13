@@ -8,12 +8,13 @@ use std::fmt::Display;
 mod maps_co;
 mod no_op;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 #[serde(tag = "provider")]
 pub enum MapConfig {
     #[serde(rename = "maps.co")]
     MapsCo { api_key: String },
     #[serde(rename = "none")]
+    #[default]
     None,
 }
 
@@ -24,12 +25,6 @@ impl MapConfig {
             MapConfig::None => Box::new(no_op::NoOpMapsProvider {}),
         };
         provider
-    }
-}
-
-impl Default for MapConfig {
-    fn default() -> Self {
-        MapConfig::None
     }
 }
 

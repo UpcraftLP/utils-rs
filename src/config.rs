@@ -35,7 +35,7 @@ pub fn load_config() -> anyhow::Result<AppConfig> {
             "Config file not found at {}, creating default config...",
             &config_path.to_string_lossy().replace("\\", "/")
         );
-        return Ok(create_default_config(&config_path)?);
+        return create_default_config(&config_path);
     }
     let cfg_string = fs::read_to_string(&config_path).context("Unable to read config file!")?;
     let config = toml::from_str::<AppConfig>(&cfg_string).unwrap_or_else(|e| {
