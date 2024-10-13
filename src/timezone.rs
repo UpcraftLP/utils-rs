@@ -1,12 +1,15 @@
+use std::fmt::{Display, Formatter};
+use std::path::Display;
+use std::str::FromStr;
+use anyhow::bail;
 use crate::maps::Location;
 use chrono::{DateTime, NaiveDateTime};
 use chrono_tz::Tz;
 use reqwest::header::ACCEPT;
 use reqwest::Url;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 pub async fn get_time_at(location: &Location) -> anyhow::Result<GetTimeResponse> {
-
     let client = reqwest::Client::new();
 
     let mut url = Url::parse("https://timeapi.io/api/time/current/coordinate")?;
@@ -19,7 +22,7 @@ pub async fn get_time_at(location: &Location) -> anyhow::Result<GetTimeResponse>
     Ok(result)
 }
 
-#[derive(Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct GetTimeResponse {
     year: i32,
     month: i32,
@@ -53,7 +56,7 @@ impl GetTimeResponse {
 }
 
 
-#[derive(Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 enum DayOfWeek {
     Sunday,
     Monday,
@@ -62,4 +65,41 @@ enum DayOfWeek {
     Thursday,
     Friday,
     Saturday,
+}
+
+impl Default for DayOfWeek {
+    fn default() -> Self {
+        DayOfWeek::Sunday
+    }
+}
+
+impl Display for DayOfWeek {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> {
+        write!(f, "{}", match self {
+            DayOfWeek::Sunday => "Sunday",
+            DayOfWeek::Monday => "Monday",
+            DayOfWeek::Tuesday => "Tuesday",
+            DayOfWeek::Wednesday => "Wednesday",
+            DayOfWeek::Thursday => "Thursday",
+            DayOfWeek::Friday => "Friday",
+            DayOfWeek::Saturday => "Saturday",
+        })
+    }
+}
+
+impl FromStr for DayOfWeek {
+    type Err = anyhow::Error;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_ascii_lowercase().as_str() {
+            "sunday" => Ok(DayOfWeek::Sunday),
+            "monday" => Ok(DayOfWeek::Monday),
+            "tuesday" => Ok(DayOfWeek::Tuesday),
+            "wednesday" => Ok(DayOfWeek::Wednesday),
+            "thursday" => Ok(DayOfWeek::Thursday),
+            "friday" => Ok(DayOfWeek::Friday),
+            "saturday" => Ok(DayOfWeek::Saturday),
+            _ => bail!("Invalid day of week: {s}"),
+        }
+    }
 }

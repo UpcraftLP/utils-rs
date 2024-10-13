@@ -1,7 +1,7 @@
 use async_trait::async_trait;
 use reqwest::header::ACCEPT;
 use reqwest::Url;
-use serde::{de, Deserialize, Deserializer};
+use serde::{de, Deserialize, Deserializer, Serialize};
 use crate::maps::{Location, MapsProvider};
 
 use serde_aux::prelude::*;
@@ -43,7 +43,7 @@ impl MapsProvider for MapsCoProvider {
     }
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 struct MapsCoResponse {
     place_id: u64,
     license: Option<String>,
